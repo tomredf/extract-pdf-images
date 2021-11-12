@@ -1,12 +1,9 @@
 {
-  "name": "mypackage",
+  "name": "extract-pdf-images",
   "version": "1.0.0",
-  "description": "test",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "description": "Extract images from PDF files",
+  "main": "main.py",
+  "author": "Dermot Fitzpatrick",
   "license": "ISC",
   "dependencies": {
     "tailwindcss": "^3.0.0-alpha.2"
