@@ -47,12 +47,12 @@ def home():
 def upload_and_process():
 
     if "file" not in request.files: # invalid request
-        flash("Invalid request.", "Error")
+        # flash("Invalid request.", "Error")
         return render_template('index.html')
 
     file = request.files['file']
     if file.filename == '': # no file uploaded by user
-        flash("No file seleted.", "Error")
+        # flash("No file seleted.", "Error")
         return render_template('index.html')
 
     if file and allowed_file(file.filename):
@@ -64,19 +64,13 @@ def upload_and_process():
         except Exception as e:
             print(e)
             traceback.print_exc()
-            flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
+            # flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
             return render_template('index.html')
         else:
             @site.after_request
             def delete(response):
-                try:
-                    os.remove('images/pdfImages.zip') # delete the zip file after it has been downloaded
-                    return response
-                except Exception as e:
-                    print(e)
-                    traceback.print_exc()
-                    flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
-                    return render_template('index.html')
+                os.remove('images/pdfImages.zip') # delete the zip file after it has been downloaded
+                return response
 
             return send_file('images/pdfImages.zip',
               mimetype = 'zip',
