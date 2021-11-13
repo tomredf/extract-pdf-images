@@ -1,5 +1,5 @@
 from pikepdf import Pdf, PdfImage
-from flask import Flask, request, send_file, redirect, url_for, render_template
+from flask import Flask, request, send_file, redirect, url_for, render_template, flash
 from flask.helpers import send_from_directory
 from werkzeug.utils import secure_filename
 import os, traceback
@@ -33,9 +33,11 @@ def extractImages(filename):
       pdfimage = PdfImage(rawimage)
       f = pdfimage.extract_to(fileprefix='images/image_' + str(n))
       zippedImages.write(f)
+      os.remove(f) # Delete the image once it is added to the zip file
       n += 1
 
   zippedImages.close()
+  os.remove(filename) # Delete the PDF file once we are done
 
 @site.route('/')
 def home():
@@ -44,17 +46,14 @@ def home():
 @site.route('/process', methods=["POST"])
 def upload_and_process():
 
-    # def download(filename):
-      # uploads = os.path.join(site.config["OUTPUT_DIR"])
-      # print(uploads)
-      # return send_from_directory(uploads, filename)
-
     if "file" not in request.files: # invalid request
-        return "Invalid request."
+        flash("Invalid request.", "Error")
+        return render_template('index.html')
 
     file = request.files['file']
     if file.filename == '': # no file uploaded by user
-            return "No file selected."
+        flash("No file seleted.", "Error")
+        return render_template('index.html')
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -65,8 +64,20 @@ def upload_and_process():
         except Exception as e:
             print(e)
             traceback.print_exc()
-            return "An error occurred. Please ensure that your pdf is correctly formatted and try again."
+            flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
+            return render_template('index.html')
         else:
+            @site.after_request
+            def delete(response):
+                try:
+                    os.remove('images/pdfImages.zip') # delete the zip file after it has been downloaded
+                    return response
+                except Exception as e:
+                    print(e)
+                    traceback.print_exc()
+                    flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
+                    return render_template('index.html')
+
             return send_file('images/pdfImages.zip',
               mimetype = 'zip',
               download_name= 'pdfImages.zip',
@@ -93,5 +104,5 @@ def download_file():
     # os.remove("pdfImages2.zip")
     # os.remove("images/pdfImages1.zip")
     
-
+site.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 site.run(host='0.0.0.0', port=8080)

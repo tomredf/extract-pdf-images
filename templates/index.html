@@ -65,6 +65,9 @@
                                 </label><br>
                                 <input class="mt-3 cursor-pointer inline-block bg-indigo-600 border border-transparent py-3 px-6 rounded-md font-medium text-white hover:bg-indigo-700" type="submit"
                                        value="Download Images">
+                                {% for category, message in get_flashed_messages(with_categories=True) %}
+                                  <div class="alert-{{category}}">Error: {{ message }}</div>
+                                {% endfor %}
                             </form>
                         </div>
                     </div>
