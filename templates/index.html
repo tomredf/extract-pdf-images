@@ -46,27 +46,23 @@
                 <div class="max-w-2xl mx-auto py-10 lg:py-20 lg:max-w-none">
                     <div class="lg:pr-16">
                         <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl xl:text-5xl">Instantly Extract Images From PDF Files</h1>
-                        <p class="mt-4 text-xl text-gray-600">Choose a PDF file from your computer to upload, and then
+                        <p class="mt-4 text-lg text-gray-600">Choose a PDF file from your computer to upload, and then
                             click Download Images.
                         <div class="mt-6">
                             <form action="/process" enctype="multipart/form-data" method="post">
-                                <label
-                                        class="relative cursor-pointer text-2xl bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"
-                                        for="pdf-upload"
-                                >
-                                    <span>Choose PDF File</span>
+
                                     <input
                                             accept="application/pdf"
-                                            class="sr-only text-white mt-2"
+                                            class="text-md text-gray-700 font-medium mt-2 bg-lc-yellow-500"
                                             id="pdf-upload"
                                             name="file"
                                             type="file"
                                     />
-                                </label><br>
-                                <input class="disabled:opacity-30 mt-3 cursor-pointer inline-block bg-indigo-600 border border-transparent py-3 px-6 rounded-md font-medium text-white hover:bg-indigo-700" type="submit"
+                                
+                                <input class="disabled:opacity-30 mt-3 cursor-pointer inline-block bg-indigo-600 border border-transparent py-1.5 px-4 rounded-md font-medium text-white hover:bg-indigo-700" type="submit"
                                        value="Download Images">
                                 {% for category, message in get_flashed_messages(with_categories=True) %}
-                                  <div class="alert-{{category}}">Error: {{ message }}</div>
+                                  <div class="alert-{{category}}">{{ message }}</div>
                                 {% endfor %}
                             </form>
                         </div>

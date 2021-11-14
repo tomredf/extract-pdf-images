@@ -23,6 +23,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def extractImages(filename):
+  # session['_flashes'].clear()
   zippedImages = ZipFile('images/pdfImages.zip', 'w')
   pdfFile = Pdf.open(filename)
   n = 1
@@ -45,9 +46,8 @@ def home():
 
 @site.route('/process', methods=["POST"])
 def upload_and_process():
-
+    
     if "file" not in request.files: # invalid request
-        # session['_flashes'].clear()
         flash("Invalid request.", "Error")
         return render_template('index.html')
 
@@ -71,15 +71,15 @@ def upload_and_process():
             return render_template('index.html')
         else:
             # @site.after_request
-            # def delete(response):
+            # def clear():
                 #os.remove('images/pdfImages.zip') # delete the zip file after it has been downloaded
-                # return response
+                # return redirect(url_for('home'))
 
             return send_file('images/pdfImages.zip',
               mimetype = 'zip',
               download_name= 'pdfImages.zip',
               as_attachment = True)
-            # return redirect(url_for('download_file'))
+            
 
 @site.route('/download_file', methods=['GET'])
 def download_file():
