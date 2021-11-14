@@ -3,7 +3,9 @@ from flask import Flask, request, send_file, redirect, url_for, render_template,
 from flask.helpers import send_from_directory
 from werkzeug.utils import secure_filename
 import os, traceback
-from zipfile import ZipFile
+from zipfile import ZipFile 
+from datetime import datetime
+
 
 
 site = Flask(__name__)
@@ -42,20 +44,24 @@ def extractImages(filename):
 
 @site.route('/')
 def home():
-  return render_template('index.html')
+  year = datetime.now().year
+  return render_template('index.html', title="Extract PDF Images", year=year)
 
 @site.route('/process', methods=["POST"])
 def upload_and_process():
     
     if "file" not in request.files: # invalid request
         flash("Invalid request.", "Error")
-        return render_template('index.html')
+        year = datetime.now().year
+        return render_template('index.html', title="Extract PDF Images z", year=year)
 
     file = request.files['file']
     if file.filename == '': # no file uploaded by user
         # session['_flashes'].clear()
-        flash("No file seleted.", "Error")
-        return render_template('index.html')
+        flash("No PDF file selected.", "Error")
+        year = datetime.now().year
+        return render_template('index.html', title="Extract PDF Images", year=year)
+        # return redirect(url_for('home'), title='Extract PDF Images')
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -68,12 +74,18 @@ def upload_and_process():
             traceback.print_exc()
             # session['_flashes'].clear()
             flash("An error occurred. Please ensure that your pdf is correctly formatted and try again.", "Error")
-            return render_template('index.html')
+            year = datetime.now().year
+            return render_template('index.html', title="Extract PDF Images", year=year)
         else:
-            # @site.after_request
-            # def clear():
-                #os.remove('images/pdfImages.zip') # delete the zip file after it has been downloaded
+            @site.teardown_request
+            def teardown_request_func(error=None):
+                print("teardown_request is running!")
+
+                # file = None
+                # year = datetime.now().year
+                # return render_template('index.html', title="Extract PDF Images z", year=year)
                 # return redirect(url_for('home'))
+                # return redirect(request.referrer)
 
             return send_file('images/pdfImages.zip',
               mimetype = 'zip',
@@ -102,4 +114,4 @@ def download_file():
     # os.remove("images/pdfImages1.zip")
     
 site.secret_key = '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
-site.run(host='0.0.0.0', port=8080)
+site.run(host='0.0.0.0', port=8080, debug=False)

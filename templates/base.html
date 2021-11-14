@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{url_for('static',filename='css/main.css')}}" rel="stylesheet">
+	  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title> {% block title%} {{ title }} {% endblock %} </title>
+</head>
+
+<body class="bg-gradient-to-r from-red-300 via-blue-200 to-yellow-200">
+    <div>
+        {% block content%}
+        {% endblock %}
+    </div>
+</body>
+
+</html>
